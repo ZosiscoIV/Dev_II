@@ -4,20 +4,21 @@ from fraction import Fraction
 class TestFraction(unittest.TestCase):
 
     def test_initialization(self):
-        # Test normal initialization
         f = Fraction(10, 20)
         self.assertEqual(f.numerator, 1)
         self.assertEqual(f.denominator, 2)
 
-        # Test initialization with denominator of 1
         f = Fraction(5, 1)
         self.assertEqual(f.numerator, 5)
         self.assertEqual(f.denominator, 1)
 
-        # Test initialization with negative values
         f = Fraction(-10, 20)
         self.assertEqual(f.numerator, -1)
         self.assertEqual(f.denominator, 2)
+
+        f = Fraction(5, -7)
+        self.assertEqual(f.numerator, -5)
+        self.assertEqual(f.denominator, 7)
 
     def test_str(self):
         f = Fraction(10, 20)
@@ -62,11 +63,14 @@ class TestFraction(unittest.TestCase):
     def test_division(self):
         f1 = Fraction(2, 3)
         f2 = Fraction(3, 4)
+        f3 = Fraction(0, 5)
         result = f1 / f2
         self.assertEqual(result.numerator, 8)
         self.assertEqual(result.denominator, 9)
         with self.assertRaises(TypeError):
             f1 / "brol"
+        with self.assertRaises(ZeroDivisionError):
+            f1 / f3
 
     def test_power(self):
         f1 = Fraction(2, 3)
@@ -95,9 +99,22 @@ class TestFraction(unittest.TestCase):
 
     def test_invalid_initialization(self):
         with self.assertRaises(ValueError):
-            Fraction(1, 0)  # Denominator cannot be zero
+            Fraction(1, 0)
 
-    # Tests for bonus methods (to be implemented)
+    def test_lesser_than(self):
+        f1 = Fraction(1, 5)
+        f2 = Fraction(2, 3)
+        self.assertTrue(f1 < f2)
+        with self.assertRaises(TypeError):
+            f1 < "brol"
+
+    def test_greater_than(self):
+        f1 = Fraction(1, 2)
+        f2 = Fraction(1, 3)
+        self.assertTrue(f1 > f2)
+        with self.assertRaises(TypeError):
+            f1 > "brol"
+
     def test_is_zero(self):
         f = Fraction(0, 3)
         self.assertTrue(f.is_zero())
@@ -126,6 +143,8 @@ class TestFraction(unittest.TestCase):
         self.assertTrue(f1.is_adjacent_to(f2))
         f3 = Fraction(3, 4)
         self.assertFalse(f1.is_adjacent_to(f3))
+        with self.assertRaises(TypeError):
+            f1.is_adjacent_to("brol")
 
 
 if __name__ == "__main__":
