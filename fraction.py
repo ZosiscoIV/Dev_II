@@ -12,8 +12,7 @@ class Fraction:
     def __init__(self,num=0, den=1):
         """This builds a fraction based on some numerator and denominator.
 
-        PRE : num est un nombre entier
-              den est un nombre entier non nul
+        PRE : 
         POST : initialise les attributs
         RAISE : ValueError lorsque num ou den ne sont pas des entiers ou que den est égal à 0
         """
