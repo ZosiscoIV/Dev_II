@@ -3,149 +3,364 @@ from fraction import Fraction
 
 class TestFraction(unittest.TestCase):
 
-    def test_initialization(self):
-        f = Fraction(10, 20)
-        self.assertEqual(f.numerator, 1)
-        self.assertEqual(f.denominator, 2)
-
-        f = Fraction(5, 1)
-        self.assertEqual(f.numerator, 5)
-        self.assertEqual(f.denominator, 1)
-
-        f = Fraction(-10, 20)
-        self.assertEqual(f.numerator, -1)
-        self.assertEqual(f.denominator, 2)
-
-        f = Fraction(5, -7)
-        self.assertEqual(f.numerator, -5)
-        self.assertEqual(f.denominator, 7)
-
-    def test_str(self):
-        f = Fraction(10, 20)
+    # __init__
+    def test_init_valid(self):
+        f = Fraction(2, 4)
         self.assertEqual(str(f), "1/2")
 
-    def test_as_mixed_number(self):
-        # Test for a proper fraction
-        f = Fraction(5, 2)
-        self.assertEqual(f.as_mixed_number(), "2 + 1/2")
+    def test_init_negative_denominator(self):
+        f = Fraction(2, -4)
+        self.assertEqual(str(f), "-1/2")
 
-        # Test for an improper fraction
-        f = Fraction(3, 3)
-        self.assertEqual(f.as_mixed_number(), "1")
+    def test_init_zero_numerator(self):
+        f = Fraction(0, 4)
+        self.assertEqual(str(f), "0/1")
 
-    def test_addition(self):
-        f1 = Fraction(1, 2)
-        f2 = Fraction(1, 3)
-        result = f1 + f2
-        self.assertEqual(result.numerator, 5)
-        self.assertEqual(result.denominator, 6)
-        with self.assertRaises(TypeError):
-            f1 + "brol"
-
-    def test_subtraction(self):
-        f1 = Fraction(1, 2)
-        f2 = Fraction(1, 3)
-        result = f1 - f2
-        self.assertEqual(result.numerator, 1)
-        self.assertEqual(result.denominator, 6)
-        with self.assertRaises(TypeError):
-            f1 - "brol"
-
-    def test_multiplication(self):
-        f1 = Fraction(2, 3)
-        f2 = Fraction(3, 4)
-        result = f1 * f2
-        self.assertEqual(result.numerator, 1)
-        self.assertEqual(result.denominator, 2)
-        with self.assertRaises(TypeError):
-            f1 * "brol"
-
-    def test_division(self):
-        f1 = Fraction(2, 3)
-        f2 = Fraction(3, 4)
-        f3 = Fraction(0, 5)
-        result = f1 / f2
-        self.assertEqual(result.numerator, 8)
-        self.assertEqual(result.denominator, 9)
-        with self.assertRaises(TypeError):
-            f1 / "brol"
+    def test_init_zero_denominator(self):
         with self.assertRaises(ZeroDivisionError):
-            f1 / f3
+            Fraction(2, 0)
 
-    def test_power(self):
-        f1 = Fraction(2, 3)
-        result = f1 ** 2
+    def test_init_non_integer_numerator(self):
+        with self.assertRaises(ValueError):
+            Fraction(2.5, 4)
+
+    def test_init_non_integer_denominator(self):
+        with self.assertRaises(ValueError):
+            Fraction(2, 4.5)
+
+    # __str__
+    def test_str(self):
+        f = Fraction(2, 4)
+        self.assertEqual(str(f), "1/2")
+
+    # as_mixed_number
+    def test_as_mixed_number(self):
+        f = Fraction(7, 3)
+        self.assertEqual(f.as_mixed_number(), "2 + 1/3")
+
+    def test_as_mixed_number_integer(self):
+        f = Fraction(6, 3)
+        self.assertEqual(f.as_mixed_number(), "2")
+
+    def test_as_mixed_number_negative(self):
+        f = Fraction(-7, 3)
+        self.assertEqual(f.as_mixed_number(), "-2 - 1/3")
+
+    def test_as_mixed_number_negative_integer(self):
+        f = Fraction(-6, 3)
+        self.assertEqual(f.as_mixed_number(), "-2")
+
+    # __add__
+    def test_add_plus_plus(self):
+        f1 = Fraction(1, 2)
+        f2 = Fraction(1, 4)
+        self.assertEqual(f1 + f2, Fraction(3, 4))
+
+    def test_add_plus_moins(self):
+        f1 = Fraction(1, 2)
+        f2 = Fraction(-1, 4)
+        self.assertEqual(f1 + f2, Fraction(1, 4))
+
+    def test_add_moins_plus(self):
+        f1 = Fraction(-1, 2)
+        f2 = Fraction(1, 4)
+        self.assertEqual(f1 + f2, Fraction(-1, 4))
+
+    def test_add_moins_moins(self):
+        f1 = Fraction(-1, 2)
+        f2 = Fraction(-1, 4)
+        self.assertEqual(f1 + f2, Fraction(-3, 4))
+
+    def test_add_zero_numerator(self):
+        f1 = Fraction(1, 2)
+        f2 = Fraction(0, 4)
+        self.assertEqual(f1 + f2, Fraction(1, 2))
+
+    def test_add_opposite(self):
+        f1 = Fraction(1, 2)
+        f2 = Fraction(-1, 2)
+        self.assertEqual(f1 + f2, Fraction(0, 1))
+
+    def test_add_non_fraction(self):
+        f = Fraction(1, 2)
+        with self.assertRaises(TypeError):
+            f + 2
+
+    # __sub__
+    def test_sub_plus_plus(self):
+        f1 = Fraction(3, 4)
+        f2 = Fraction(1, 4)
+        self.assertEqual(f1 - f2, Fraction(1, 2))
+
+    def test_sub_plus_moins(self):
+        f1 = Fraction(3, 4)
+        f2 = Fraction(-1, 4)
+        self.assertEqual(f1 - f2, Fraction(1, 1))
+
+    def test_sub_moins_plus(self):
+        f1 = Fraction(-3, 4)
+        f2 = Fraction(1, 4)
+        self.assertEqual(f1 - f2, Fraction(-1, 1))
+
+    def test_sub_zero_numerator(self):
+        f1 = Fraction(3, 4)
+        f2 = Fraction(0, 4)
+        self.assertEqual(f1 - f2, Fraction(3, 4))
+
+    def test_sub_same_positive(self):
+        f1 = Fraction(3, 4)
         f2 = Fraction(3, 4)
-        result2 = f2 ** -2
-        self.assertEqual(result.numerator, 4)
-        self.assertEqual(result.denominator, 9)
-        self.assertEqual(result2.numerator, 16)
-        self.assertEqual(result2.denominator, 9)
-        with self.assertRaises(TypeError):
-            f1 ** "brol"
+        self.assertEqual(f1 - f2, Fraction(0, 1))
 
-    def test_equality(self):
-        f1 = Fraction(2, 3)
-        f2 = Fraction(4, 6)
+    def test_sub_same_negative(self):
+        f1 = Fraction(-3, 4)
+        f2 = Fraction(-3, 4)
+        self.assertEqual(f1 - f2, Fraction(0, 1))
+
+    def test_sub_non_fraction(self):
+        f = Fraction(3, 4)
+        with self.assertRaises(TypeError):
+            f - 2
+
+    # __mul__
+    def test_mul_plus_plus(self):
+        f1 = Fraction(1, 2)
+        f2 = Fraction(2, 3)
+        self.assertEqual(f1 * f2, Fraction(1, 3))
+
+    def test_mul_plus_moins(self):
+        f1 = Fraction(1, 2)
+        f2 = Fraction(-2, 3)
+        self.assertEqual(f1 * f2, Fraction(-1, 3))
+
+    def test_mul_moins_plus(self):
+        f1 = Fraction(-1, 2)
+        f2 = Fraction(2, 3)
+        self.assertEqual(f1 * f2, Fraction(-1, 3))
+
+    def test_mul_moins_moins(self):
+        f1 = Fraction(-1, 2)
+        f2 = Fraction(-2, 3)
+        self.assertEqual(f1 * f2, Fraction(1, 3))
+
+    def test_mul_zero_numerator(self):
+        f1 = Fraction(1, 2)
+        f2 = Fraction(0, 3)
+        self.assertEqual(f1 * f2, Fraction(0, 1))
+
+    def test_mul_non_fraction(self):
+        f = Fraction(1, 2)
+        with self.assertRaises(TypeError):
+            f * 2
+
+    # __truediv__
+    def test_truediv_plus_plus(self):
+        f1 = Fraction(1, 2)
+        f2 = Fraction(2, 3)
+        self.assertEqual(f1 / f2, Fraction(3, 4))
+
+    def test_truediv_plus_moins(self):
+        f1 = Fraction(1, 2)
+        f2 = Fraction(-2, 3)
+        self.assertEqual(f1 / f2, Fraction(-3, 4))
+
+    def test_truediv_moins_plus(self):
+        f1 = Fraction(-1, 2)
+        f2 = Fraction(2, 3)
+        self.assertEqual(f1 / f2, Fraction(-3, 4))
+
+    def test_truediv_moins_moins(self):
+        f1 = Fraction(-1, 2)
+        f2 = Fraction(-2, 3)
+        self.assertEqual(f1 / f2, Fraction(3, 4))
+
+    def test_truediv_zero_numerator(self):
+        f1 = Fraction(0, 4)
+        f2 = Fraction(1, 4)
+        self.assertEqual(f1 / f2, Fraction(0, 1))
+
+    def test_truediv_zero_denominator(self):
+        f1 = Fraction(1, 2)
+        f2 = Fraction(0, 1)
+        with self.assertRaises(ZeroDivisionError):
+            f1 / f2
+
+    def test_truediv_non_fraction(self):
+        f = Fraction(1, 2)
+        with self.assertRaises(TypeError):
+            f / 2
+
+    # __pow__
+    def test_pow_positive(self):
+        f = Fraction(2, 3)
+        self.assertEqual(f ** 2, Fraction(4, 9))
+
+    def test_pow_negative(self):
+        f = Fraction(2, 3)
+        self.assertEqual(f ** -1, Fraction(3, 2))
+
+    def test_pow_zero(self):
+        f = Fraction(2, 3)
+        self.assertEqual(f ** 0, Fraction(1, 1))
+
+    def test_pow_non_integer_exponent(self):
+        f = Fraction(2, 3)
+        with self.assertRaises(TypeError):
+            f ** 0.5
+
+    # __eq__
+    def test_eq_equal(self):
+        f1 = Fraction(1, 2)
+        f2 = Fraction(2, 4)
         self.assertTrue(f1 == f2)
-        f3 = Fraction(1, 2)
-        self.assertFalse(f1 == f3)
-        with self.assertRaises(TypeError):
-            f1 == "brol"
 
-    def test_float_conversion(self):
+    def test_eq_unequal(self):
+        f1 = Fraction(1, 2)
+        f2 = Fraction(3, 4)
+        self.assertFalse(f1 == f2)
+
+    # __float__
+    def test_float(self):
         f = Fraction(1, 2)
         self.assertEqual(float(f), 0.5)
 
-    def test_invalid_initialization(self):
-        with self.assertRaises(ValueError):
-            Fraction(1, 0)
+    def test_float_integer(self):
+        f = Fraction(2, 2)
+        self.assertEqual(float(f), 1)
 
-    def test_lesser_than(self):
-        f1 = Fraction(1, 5)
-        f2 = Fraction(2, 3)
-        self.assertTrue(f1 < f2)
-        with self.assertRaises(TypeError):
-            f1 < "brol"
-
-    def test_greater_than(self):
+    # __lt__
+    def test_lt_true(self):
         f1 = Fraction(1, 2)
-        f2 = Fraction(1, 3)
-        self.assertTrue(f1 > f2)
-        with self.assertRaises(TypeError):
-            f1 > "brol"
+        f2 = Fraction(3, 4)
+        self.assertTrue(f1 < f2)
 
-    def test_is_zero(self):
-        f = Fraction(0, 3)
+    def test_lt_false(self):
+        f1 = Fraction(1, 2)
+        f2 = Fraction(3, 4)
+        self.assertFalse(f2 < f1)
+
+    def test_lt_false_equal(self):
+        f1 = Fraction(1, 2)
+        f2 = Fraction(1, 2)
+        self.assertFalse(f2 < f1)
+
+    def test_lt_non_fraction(self):
+        f1 = Fraction(1, 2)
+        with self.assertRaises(TypeError):
+            f1 < 2
+
+
+
+    # __gt__
+    def test_gt_true(self):
+        f1 = Fraction(1, 2)
+        f2 = Fraction(3, 4)
+        self.assertTrue(f2 > f1)
+
+    def test_gt_false(self):
+        f1 = Fraction(1, 2)
+        f2 = Fraction(3, 4)
+        self.assertFalse(f1 > f2)
+
+    def test_gt_false_equal(self):
+        f1 = Fraction(1, 2)
+        f2 = Fraction(1, 2)
+        self.assertFalse(f1 > f2)
+
+    def test_gt_non_fraction(self):
+        f1 = Fraction(1, 2)
+        with self.assertRaises(TypeError):
+            f1 > 2
+
+    # is_zero
+    def test_is_zero_true(self):
+        f = Fraction(0, 1)
         self.assertTrue(f.is_zero())
 
-    def test_is_integer(self):
-        f1 = Fraction(4, 2)
-        self.assertTrue(f1.is_integer())
-        f2 = Fraction(3, 2)
-        self.assertFalse(f2.is_integer())
+    def test_is_zero_false(self):
+        f = Fraction(1, 2)
+        self.assertFalse(f.is_zero())
 
-    def test_is_proper(self):
-        f1 = Fraction(1, 2)
-        self.assertTrue(f1.is_proper())
-        f2 = Fraction(3, 2)
-        self.assertFalse(f2.is_proper())
+    def test_is_zero_false_negative(self):
+        f = Fraction(-1, 2)
+        self.assertFalse(f.is_zero())
 
-    def test_is_unit(self):
-        f1 = Fraction(1, 3)
-        self.assertTrue(f1.is_unit())
-        f2 = Fraction(2, 3)
-        self.assertFalse(f2.is_unit())
+    # is_integer
+    def test_is_integer_true(self):
+        f = Fraction(4, 2)
+        self.assertTrue(f.is_integer())
 
-    def test_is_adjacent_to(self):
+    def test_is_integer_false(self):
+        f = Fraction(3, 2)
+        self.assertFalse(f.is_integer())
+
+    def test_is_integer_true_negative(self):
+        f = Fraction(-4, 2)
+        self.assertTrue(f.is_integer())
+
+    def test_is_integer_false_negative(self):
+        f = Fraction(-3, 2)
+        self.assertFalse(f.is_integer())
+
+    def test_is_integer_zero(self):
+        f = Fraction(0, 2)
+        self.assertTrue(f.is_integer())
+
+    # is_proper
+    def test_is_proper_true(self):
+        f = Fraction(1, 2)
+        self.assertTrue(f.is_proper())
+
+    def test_is_proper_false(self):
+        f = Fraction(3, 2)
+        self.assertFalse(f.is_proper())
+
+    def test_is_proper_true_negative(self):
+        f = Fraction(-1, 2)
+        self.assertTrue(f.is_proper())
+
+    def test_is_proper_false_negative(self):
+        f = Fraction(-3, 2)
+        self.assertFalse(f.is_proper())
+
+    # is_unit
+    def test_is_unit_true(self):
+        f = Fraction(1, 3)
+        self.assertTrue(f.is_unit())
+
+    def test_is_unit_false(self):
+        f = Fraction(2, 3)
+        self.assertFalse(f.is_unit())
+
+    def test_is_unit_false_negative(self):
+        f = Fraction(-1, 3)
+        self.assertFalse(f.is_unit())
+
+    # is_adjacent_to
+    def test_is_adjacent_to_false(self):
         f1 = Fraction(1, 2)
         f2 = Fraction(1, 3)
         self.assertTrue(f1.is_adjacent_to(f2))
-        f3 = Fraction(3, 4)
-        self.assertFalse(f1.is_adjacent_to(f3))
+
+    def test_is_adjacent_to_true(self):
+        f1 = Fraction(1, 2)
+        f2 = Fraction(9, 4)
+        self.assertFalse(f1.is_adjacent_to(f2))
+
+    def test_is_adjacent_to_false_negative(self):
+        f1 = Fraction(-1, 2)
+        f2 = Fraction(-1, 3)
+        self.assertTrue(f1.is_adjacent_to(f2))
+
+    def test_is_adjacent_to_true_negative(self):
+        f1 = Fraction(-1, 2)
+        f2 = Fraction(-9, 4)
+        self.assertFalse(f1.is_adjacent_to(f2))
+
+    def test_is_adjacent_to_invalid_argument(self):
+        f1 = Fraction(1, 2)
         with self.assertRaises(TypeError):
-            f1.is_adjacent_to("brol")
+            f1.is_adjacent_to(2)
 
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()
