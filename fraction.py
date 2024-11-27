@@ -12,8 +12,8 @@ class Fraction:
     def __init__(self,num=0, den=1):
         """This builds a fraction based on some numerator and denominator.
 
-        PRE : 
-        POST : initialise les attributs
+        PRE :
+        POST : crée une fraction selon le numérateur et le dénominateur spécifiés en paramètres.
         RAISE : ValueError lorsque num ou den ne sont pas des entiers ou que den est égal à 0
         """
         if isinstance(num,int) and isinstance(den,int) and den != 0 :
@@ -24,7 +24,10 @@ class Fraction:
                 self._num = num
                 self._den = den
         else:
-            raise ValueError("Numerator and denominator must be integers")
+            if den == 0:
+                raise ZeroDivisionError("Le denominateur ne peut pas valoir zéro")
+            else:
+                raise ValueError("Numerator and denominator must be integers")
 
         pgcd = math.gcd(self._num, self._den)
         self._num //= pgcd
@@ -69,20 +72,24 @@ class Fraction:
         PRE :
         POST : renvoie un str donnant le resultat en "unite + fraction" ou juste "unite" si le résultat est un entier
         """
-        nbr = self.numerator // self.denominator
-        if self.numerator % self.denominator == 1:
-            fr = (self.numerator - (nbr * self.denominator))
-            return f"{nbr} + {fr}/{self.denominator}"
-
+        nbr = abs(self.numerator) // self.denominator
+        if abs(self.numerator) % self.denominator == 1:
+            fr = (abs(self.numerator) - (nbr * self.denominator))
+            if self.numerator < 0:
+                return f"{-nbr} - {fr}/{self.denominator}"
+            else:
+                return f"{nbr} + {fr}/{self.denominator}"
+        if self.numerator < 0:
+            return f"{-nbr}"
         return f"{nbr}"
 
-    # ------------------ Operators overloading ------------------
+# ------------------ Operators overloading ------------------
 
     def __add__(self, other):
         """Overloading of the + operator for fractions
 
          PRE :
-         POST : retourne le resultat de cette somme de fraction
+         POST : retourne une nouvelle fraction équivalente au resultat de la somme de la fraction courante et de la fraction other
          RAISE : TypeError si other n'est pas une fraction
          """
         if not isinstance(other,Fraction):
@@ -95,7 +102,7 @@ class Fraction:
         """Overloading of the - operator for fractions
 
          PRE :
-         POST : retourne le resultat de cette soustraction de fraction
+         POST : retourne une nouvelle fraction équivalente au resultat de la différence de la fraction courante et de la fraction other
          RAISE : TypeError si other n'est pas une fraction
          """
         if not isinstance(other,Fraction):
@@ -108,7 +115,7 @@ class Fraction:
         """Overloading of the * operator for fractions
 
          PRE :
-         POST : retourne le resultat de cette multiplication de fraction
+         POST : retourne une nouvelle fraction équivalente au resultat de la multiplication de la fraction courante et de la fraction other
          RAISE : TypeError si other n'est pas une fraction
          """
         if not isinstance(other,Fraction):
@@ -121,7 +128,7 @@ class Fraction:
         """Overloading of the / operator for fractions
 
          PRE :
-         POST : retourne le resultat de cette division de fraction
+         POST : retourne une nouvelle fraction équivalente au resultat de la division de la fraction courante et de la fraction other
          RAISE : TypeError si other n'est pas une fraction
          RAISE : ZeroDivisionError si other à un den égal à 0
          """
@@ -137,7 +144,7 @@ class Fraction:
         """Overloading of the ** operator for fractions
 
          PRE :
-         POST : retourne le resultat de cette puissance de fraction
+         POST : retourne une nouvelle fraction équivalente au resultat de l'exponentielle dont la base est la fraction courante et l'exposant est l'entier other
          RAISE : TypeError si other n'est pas un entier
          """
         if not isinstance(other,int):
@@ -157,7 +164,7 @@ class Fraction:
         """Overloading of the == operator for fractions
 
         PRE :
-        POST : retourne True si c'est égale sinon False
+        POST : retourne True si la fraction courante est égale à la fraction other, sinon False
         RAISE : TypeError si other n'est pas une fraction
         """
         if not isinstance(other,Fraction):
@@ -168,7 +175,7 @@ class Fraction:
         """Returns the decimal value of the fraction
 
         PRE :
-        POST : retourne la valeur de la fraction en décimal
+        POST : retourne la valeur de la fraction courante en décimal
         """
         return float(self.numerator/self.denominator)
 
@@ -179,7 +186,7 @@ class Fraction:
         """Overloading the < operator for fractions.
 
         PRE :
-        POST : retourne True si self < other, sinon False
+        POST : retourne True si la fraction courante est plus petite que la fonction other, sinon False
         RAISE : TypeError si other n'est pas une fraction
         """
         if not isinstance(other, Fraction):
@@ -191,7 +198,7 @@ class Fraction:
         """Overloading the > operator for fractions.
 
         PRE :
-        POST : retourne True si self > other, sinon False
+        POST : retourne True si la fonction courante est plus grande que la fonction other, sinon False
         RAISE : TypeError si other n'est pas une fraction
         """
         if not isinstance(other, Fraction):
@@ -204,7 +211,7 @@ class Fraction:
         """Check if a fraction's value is 0
 
         PRE :
-        POST : retourne True si la valeur de la fraction est 0, False sinon
+        POST : retourne True si la valeur de la fraction courante est 0, False sinon
         """
         return self.numerator == 0
 
@@ -212,7 +219,7 @@ class Fraction:
         """Check if a fraction is integer (e.g., 8/4, 3, 2/2, ...)
 
         PRE :
-        POST : retourne True si la fraction représente un entier, False sinon
+        POST : retourne True si la fraction courante représente un entier, False sinon
         """
         return self.numerator % self.denominator == 0
 
@@ -220,7 +227,7 @@ class Fraction:
         """Check if the absolute value of the fraction is < 1
 
         PRE :
-        POST : retourne True si la valeur absolue de la fraction est < 1, False sinon
+        POST : retourne True si la valeur absolue de la fraction courante est inférieure à 1, False sinon
         """
         return abs(self.numerator) < self.denominator
 
@@ -238,17 +245,14 @@ class Fraction:
         Two fractions are adjacent if the absolute value of their difference is a unit fraction.
 
         PRE :
-        POST : retourne True si les deux fractions sont adjacentes, False sinon
+        POST : retourne True si la fraction courante et la fraction other sont adjacentes, False sinon
         RAISE : TypeError si other n'est pas une fraction
         """
         if not isinstance(other,Fraction):
             raise TypeError("other doit être de type Fraction")
         diff = self - other
-        return diff.is_unit()
-        # if not isinstance(other, Fraction):
-        #     raise TypeError("other doit être de type Fraction")
-        # difference = abs(self - other)
-        # return difference.numerator == 1 and difference.denominator > 1
+        diff2 = Fraction(abs(diff.numerator), diff.denominator)
+        return diff2.is_unit()
 
 
 # if __name__ == "__main__":
