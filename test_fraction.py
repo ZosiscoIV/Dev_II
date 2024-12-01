@@ -219,6 +219,10 @@ class TestFraction(unittest.TestCase):
         f2 = Fraction(3, 4)
         self.assertFalse(f1 == f2)
 
+    def test_eq_non_fraction(self):
+        f1 = Fraction(1, 2)
+        self.assertFalse(f1 == 2)
+
     # __float__
     def test_float(self):
         f = Fraction(1, 2)
